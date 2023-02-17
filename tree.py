@@ -8,10 +8,8 @@ class TreeNode:
         self.point = point
         self.reward = r
         self.visitOnce = False
-        self.visitTwice = False
-        self.solutionChecked = False
+        self.checked = False
         self.score = r  # temporary score
-        self.inSol = False
         self.edges = list()
 
     def add_edge(self, edge):
@@ -45,40 +43,16 @@ class TreeNode:
 
     def set_score(self):
 
-        next_edge = None
-
         for e in self.edges:
 
             temp_node = self.get_other_node(e)
             if temp_node.visitOnce:
                 #for dynamic tree
                 e.set_score(temp_node,temp_node.score)
-                self.score += max(0, temp_node.score + e.cost)
-            else:
-                next_edge = e
+                e.set_edge_cost(temp_node)
+                self.score += temp_node.score
 
-        #for dynamic tree
-        '''
-        if next_edge:
-            next_edge.set_score(self, self.score)
-        '''
-    def update_score(self):
 
-        for e in self.edges:
-
-            temp_node = self.get_other_node(e)
-
-            if temp_node.visitTwice:
-                #detach the part of the tree on the other side of e
-                temp_score = self.score - max(0, self.score + e.cost) + max(0, temp_node.score + e.cost)
-
-                self.score = max(temp_score, self.score)
-                #for dynamic tree
-                #TODO
-
-                #for temp_e in temp_node.edges:
-
-                #e.set_score(temp_node,edge_score)
 class TreeEdge:
 
     def __init__(self, c: float, one: TreeNode, other: TreeNode):
@@ -86,7 +60,10 @@ class TreeEdge:
         self.other = other
         self.cost = c
         self.one_to_other_score = 0
+        self.one_to_other_cost = 0
         self.other_to_one_score = 0
+        self.other_to_one_cost = 0
+        self.checkedOnce = False
 
     def set_score(self, first_node, score):
         if first_node == self.one:
@@ -94,6 +71,20 @@ class TreeEdge:
         else:
             self.other_to_one_score = score
 
+    def set_edge_cost(self,first_node):
+
+        total_cost = 0
+
+        for edge in first_node.edges:
+            if edge.checkedOnce:
+                total_cost += max(edge.one_to_other_cost, edge.other_to_one_cost)
+
+        if first_node == self.one:
+            self.one_to_other_cost = total_cost
+        else:
+            self.other_to_one_cost = total_cost
+
+        self.checkedOnce = True
     '''
     def get_other_node(self, node: TreeNode):
         if node == self.one:
@@ -157,8 +148,7 @@ class Tree:
         return string
 
 
+#TODO check whether angle is computed from edge/vertex (edge)
 
-#TODO check whether angle is computed from edge/vertex
 
-#TODO reduce run through from 2 to 1 (one direction is not affected)
 

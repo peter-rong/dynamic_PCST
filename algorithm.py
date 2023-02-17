@@ -1,147 +1,169 @@
 import tree
-
+import math
+import copy
 from collections import deque
+
 
 class Algorithm:
 
-	def __init__(self, current_tree: tree.Tree):
-		self.tree = current_tree
+    def __init__(self, current_tree: tree.Tree):
+        self.tree = current_tree
+        self.alpha_list = []
+        self.tree_list = []
 
-	def execute(self):
+    def print_edges(self):
+        for e in self.tree.edges:
+            print("Edge score between " + str(e.one.point) + " and "
+                  + str(e.other.point) + " is " + str(e.one_to_other_score))
+            print("Edge cost between " + str(e.one.point) + " and "
+                  + str(e.other.point) + " is " + str(e.one_to_other_cost))
+            print("Edge score between " + str(e.other.point) + " and "
+                  + str(e.one.point) + " is " + str(e.other_to_one_score))
+            print("Edge cost between " + str(e.other.point) + " and "
+                  + str(e.one.point) + " is " + str(e.other_to_one_cost))
 
-			for node in self.tree.nodes:
-				node.score = node.reward
-				node.visitOnce = False
-				node.visitTwice = False
-				node.solutionChecked = False
+        return self.tree
 
-			stack = deque() #the order of tracing back
-			leaves = self.tree.get_leaves()
+    def print_result(self):
+        for i in range(len(self.alpha_list)):
+            print("alpha = "+ str(self.alpha_list[i]) +
+                  " and tree has "+ str(len(self.tree_list[i].nodes)) +" nodes")
 
-			#first level of leaves
-			for leaf in leaves:
-				stack.append(leaf)
-				leaf.visitOnce = True
+        print("Past the last alpha threshold, the tree has " + str(len(self.tree.nodes)) +" node(s).")
+    def iterate(self):
 
-			leaves = self.tree.get_leaves()
-			temp_leaf_count = 0
+        total_score, total_cost = 0, 0
 
-			#forward
-			while len(leaves) != 0:
+        for node in self.tree.nodes:
+            node.score = node.reward
+            node.visitOnce = False
+            total_score += node.reward
 
-				temp_leaf_count = len(leaves)
-				for leaf in leaves:
-					stack.append(leaf)
-					leaf.set_score()
+        for edge in self.tree.edges:
+            total_cost += edge.cost
+            edge.one_to_other_score = 0
+            edge.one_to_other_cost = 0
+            edge.other_to_one_score = 0
+            edge.other_to_one_cost = 0
 
-				for leaf in leaves:
-					leaf.visitOnce = True
+        stack = deque()  # the order of tracing back
+        leaves = self.tree.get_leaves()
 
-				leaves = self.tree.get_leaves()
-			'''
-			for node in self.tree.nodes:
-				print(str(node.point) + ' ' + str(node.score))
-			'''
-			# trace back
+        # first level of leaves
+        for leaf in leaves:
+            stack.append(leaf)
+            leaf.visitOnce = True
 
-			if temp_leaf_count > 2:
-				print('Error in algorithm, more than 2 ending point')
+        leaves = self.tree.get_leaves()
+        temp_leaf_count = 0
 
-			if temp_leaf_count == 1:
-				temp = stack.pop()
-				temp.visitTwice = True
+        # forward
+        while len(leaves) != 0:
 
-			if temp_leaf_count == 2:
-				temp1 = stack.pop()
-				temp2 = stack.pop()
-				boost_to_temp1 = max(0,temp2.score+temp1.get_edge_cost(temp2))
-				boost_to_temp2 = max(0,temp1.score+temp2.get_edge_cost(temp1))
+            temp_leaf_count = len(leaves)
+            for leaf in leaves:
+                stack.append(leaf)
+                leaf.set_score()
 
-				temp1.score += boost_to_temp1
-				temp2.score += boost_to_temp2
+            for leaf in leaves:
+                leaf.visitOnce = True
 
-				temp1.visitTwice = True
-				temp2.visitTwice = True
+            leaves = self.tree.get_leaves()
 
-			while len(stack) > 0:
-				temp = stack.pop()
-				temp.visitTwice = True
-				temp.update_score()
+        # trace back
 
-			root = self.get_solution_node()
+        min_alpha = math.inf
+        min_edge = None
 
-			self.get_solution_tree(root)
+        for edge in self.tree.edges:
 
-			return self.tree
+            #update score and cost for the other direction
+            if len(edge.one.edges) == 1:
+                edge.other_to_one_cost = total_cost - edge.cost
+                edge.other_to_one_score = total_score - edge.one.score
+            elif len(edge.other.edges) == 1:
+                edge.one_to_other_cost = total_cost - edge.cost
+                edge.one_to_other_score = total_score - edge.other.score
+            else:
+                if edge.one_to_other_score == 0:
+                    edge.one_to_other_score = total_score - edge.other_to_one_score
+                    edge.one_to_other_cost = total_cost - edge.cost - edge.other_to_one_cost
+                else:
+                    edge.other_to_one_score = total_score - edge.one_to_other_score
+                    edge.other_to_one_cost = total_cost - edge.cost - edge.one_to_other_cost
 
+            #find minimum alpha and the edge
+            if edge.one_to_other_cost != 0:
 
-	def get_solution_node(self):
+                if min_alpha > edge.one_to_other_score / edge.one_to_other_cost:
+                    min_alpha = edge.one_to_other_score / edge.one_to_other_cost
+                    min_edge = edge
+            if edge.other_to_one_cost != 0:
 
-		max_node = self.tree.nodes[0]
+                if min_alpha > edge.other_to_one_score / edge.other_to_one_cost:
+                    min_alpha = edge.other_to_one_score / edge.other_to_one_cost
+                    min_edge = edge
 
-		for node in self.tree.nodes:
-			#print(str(node.point) + ' ' + str(node.score))
-			if node.score > max_node.score:
-				max_node = node
+        '''
+        if min_edge.one_to_other_cost != 0 and\
+                min_alpha == (min_edge.one_to_other_score / min_edge.one_to_other_cost):
+            print("min_alpha is " + str(min_alpha) + " and the edge is from "
+                  + str(min_edge.one.point) + " to " + str(min_edge.other.point))
+        else:
+            print("min_alpha is " + str(min_alpha) + " and the edge is from "
+                  + str(min_edge.other.point) + " to " + str(min_edge.one.point))
+        '''
+        if len(self.alpha_list) == 0:
+            self.alpha_list.append(min_alpha)
+        else:
+            self.alpha_list.append(min_alpha+self.alpha_list[-1])
+        copied_tree = copy.deepcopy(self.tree)
+        self.tree_list.append(copied_tree)
 
-		return max_node
+        self.shrink_tree(min_alpha, min_edge)
+        #print("Tree has "+ str(len(self.tree.nodes))+ " nodes left")
+        #print("Tree has " + str(len(self.tree.edges)) + " edges left")
 
-	def get_solution_tree(self,root):
+        #still need to shrink more
+        if len(self.tree.nodes) > 2:
+            self.tree = self.iterate()
+        else:
+            self.print_result()
+        return self.alpha_list, self.tree_list
 
-		queue = deque()
-		queue.append(root)
-		root.solutionChecked = True
+    #shrink the tree after increasing alpha
+    def shrink_tree(self, alpha, min_edge):
 
-		total_score = 0
-		sol_list = []
+        tree = self.tree
+        queue = deque()
+        safe_node = None
+        if min_edge.one_to_other_cost != 0 and\
+                alpha == (min_edge.one_to_other_score / min_edge.one_to_other_cost):
+            safe_node = min_edge.other
+            queue.append(min_edge.one)
 
-		while len(queue) > 0:
-			curr = queue.popleft()
-			total_score += curr.reward
+        else:
+            safe_node = min_edge.one
+            queue.append(min_edge.other)
 
-			sol_list.append(curr.point)
-			curr.inSol = True
+        while queue:
+            curr_node = queue.popleft()
 
-			for e in curr.edges:
-				neighbor = curr.get_other_node(e)
-				if not neighbor.solutionChecked:
-					if neighbor.score == root.score:
-						total_score += e.cost
-						queue.append(neighbor)
-					neighbor.solutionChecked = True
+            for edge in curr_node.edges:
 
-		print(sol_list)
-		print("Total score is "+ str(total_score))
+                if edge in tree.edges:
 
-		for e in self.tree.edges:
-			print("Edge score between "+ str(e.one.point)+ " and "
-				  + str(e.other.point)+" is "+ str(e.one_to_other_score))
-			print("Edge score between "+ str(e.other.point)+ " and "
-				  + str(e.one.point)+" is "+ str(e.other_to_one_score))
+                    tree.edges.remove(edge)
 
-		'''
+                    other_node = curr_node.get_other_node(edge)
 
-		queue = deque()
-		solution_tree = tree.Tree(list(),list(),list(),list())
-		queue.append(root)
-		solution_tree.add_node(root)
-		root.solutionChecked = True
+                    if other_node != safe_node:
+                        queue.append(other_node)
+                    other_node.edges.remove(edge)
+            curr_node.edges = []
+            tree.nodes.remove(curr_node)
 
-		while len(queue) > 0:
-
-			curr = queue.popleft()
-
-			for e in curr.edges:
-				neighbor = curr.get_other_node(e)
-				if not neighbor.solutionChecked:
-					if neighbor.score == root.score:
-						queue.append(neighbor)
-						solution_tree.add_node(neighbor)
-						solution_tree.add_edge(e)
-
-					neighbor.solutionChecked = True
-		print('here')
-
-		return solution_tree
-		
-		'''
+        for edge in tree.edges:
+            edge.one_to_other_score -= alpha * edge.one_to_other_cost
+            edge.other_to_one_score -= alpha * edge.other_to_one_cost
+        return tree
