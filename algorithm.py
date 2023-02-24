@@ -4,7 +4,6 @@ import copy
 from collections import deque
 import time
 
-
 class Algorithm:
 
     def __init__(self, current_tree: tree.Tree):
@@ -29,6 +28,8 @@ class Algorithm:
                   " and tree has " + str(len(self.tree_list[i].nodes)) + " nodes")
 
     def execute(self, input_tree):
+
+        print(len(input_tree.get_leaves()))
         start = time.time()
         total_score, total_cost = 0, 0
 

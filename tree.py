@@ -128,7 +128,4 @@ class Tree:
         return string
 
 
-#TODO check whether angle is computed from edge/vertex (edge)
-
-
 

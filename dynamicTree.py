@@ -1,16 +1,16 @@
 #this file is for recording TODOS for dynamic tree implementation and tests
 
-#Done TODO algorithm implementation
+#Done algorithm implementation
 
-#DONE TODO (added) change from edge costs to node costs
+#DONE (added) change from edge costs to node costs
 
-#Done TODO test with toy example
+#Done test with toy example
 
-#Done TODO test our bigger example (randomized tree)
+#Done test our bigger example (randomized tree)
 
-#TODO turn skeleton initial graph to node graph (PCST_solver)
+#Done turn skeleton initial graph to node graph (PCST_solver)
 
-#TODO visualization (napari)
+#TODO implement visualization (napari)
 
 #TODO cross validate with dapcstp solver
 
