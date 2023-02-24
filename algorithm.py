@@ -27,8 +27,6 @@ class Algorithm:
             print("alpha = " + str(self.alpha_list[i]) +
                   " and tree has " + str(len(self.tree_list[i].nodes)) + " nodes")
 
-        print("Past the last alpha threshold, the tree has " + str(len(self.tree.nodes)) + " node(s).")
-
     def execute(self):
 
         min_alpha, new_tree = self.iterate(self.tree)
@@ -125,7 +123,6 @@ class Algorithm:
         self.alpha_list.append(self.alpha_list[-1] + min_alpha)
         new_tree = self.shrink_tree(input_tree, min_alpha, min_edge)
         self.tree_list.append(copy.deepcopy(new_tree))
-        print("Tree has "+ str(len(new_tree.nodes))+ " nodes left")
 
         return min_alpha, new_tree
 
