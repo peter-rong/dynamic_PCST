@@ -9,7 +9,6 @@ def rand_between_bounds(bound, sig_fig) -> float:
 
     return round(uniform(lower, upper), sig_fig)
 
-
 def rand_tree(node_num, cost_bounds, reward_bounds, sig_fig) -> Tree:
     tree = Tree([], [], [], [])
 
@@ -18,7 +17,8 @@ def rand_tree(node_num, cost_bounds, reward_bounds, sig_fig) -> Tree:
 
     # first node where no edge can appear
     node_count = 0
-    new_node = TreeNode(node_count, rand_between_bounds(reward_bounds, sig_fig))
+    new_node = TreeNode(node_count, rand_between_bounds(reward_bounds, sig_fig),
+                        rand_between_bounds(cost_bounds, sig_fig))
     tree.nodes.append(new_node)
     node_count += 1
     node_num -= 1
@@ -26,20 +26,18 @@ def rand_tree(node_num, cost_bounds, reward_bounds, sig_fig) -> Tree:
     while node_num != 0:
         old_index = randint(0, node_count - 1)
         old_node = tree.nodes[old_index]
-        new_node = TreeNode(node_count, rand_between_bounds(reward_bounds, sig_fig))
+        new_node = TreeNode(node_count, rand_between_bounds(reward_bounds, sig_fig),
+                            rand_between_bounds(cost_bounds, sig_fig))
         tree.nodes.append(new_node)
         node_count += 1
         node_num -= 1
-        new_edge = TreeEdge(rand_between_bounds(cost_bounds, sig_fig), old_node, new_node)
+        new_edge = TreeEdge(old_node, new_node)
         old_node.edges.append(new_edge)
         new_node.edges.append(new_edge)
 
         tree.edges.append(new_edge)
 
-    print(tree)
     return tree
 
-test_tree = rand_tree(8, [1, 3], [4, 8], 0)
 
-Algorithm(test_tree).iterate()
 

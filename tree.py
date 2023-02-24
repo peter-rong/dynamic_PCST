@@ -1,15 +1,15 @@
 import sys
 
-
 class TreeNode:
 
-    def __init__(self, point, r: float):
+    def __init__(self, point, r: float, c: float):
 
         self.point = point
         self.reward = r
+        self.cost = c
         self.visitOnce = False
-        self.checked = False
-        self.score = r  # temporary score
+        self.score = r #temporary score
+        self.total_cost = c #temporary cost
         self.edges = list()
 
     def add_edge(self, edge):
@@ -34,12 +34,6 @@ class TreeNode:
 
         print('Edge not fount, error')
         return None
-    def get_edge_cost(self, otherNode):
-        for e in self.edges:
-            if self.get_other_node(e) == otherNode:
-                return e.cost
-
-        print('Edge not fount, error')
 
     def set_score(self):
 
@@ -48,49 +42,40 @@ class TreeNode:
             temp_node = self.get_other_node(e)
             if temp_node.visitOnce:
                 #for dynamic tree
-                e.set_score(temp_node,temp_node.score)
-                e.set_edge_cost(temp_node)
+                e.set_score(temp_node, temp_node.score)
+                e.set_cost(temp_node, temp_node.total_cost)
                 self.score += temp_node.score
+                self.cost += temp_node.cost
 
 
 class TreeEdge:
 
-    def __init__(self, c: float, one: TreeNode, other: TreeNode):
+    def __init__(self, one: TreeNode, other: TreeNode):
         self.one = one
         self.other = other
-        self.cost = c
         self.one_to_other_score = 0
         self.one_to_other_cost = 0
         self.other_to_one_score = 0
         self.other_to_one_cost = 0
-        self.checkedOnce = False
 
     def set_score(self, first_node, score):
+
         if first_node == self.one:
             self.one_to_other_score = score
         else:
             self.other_to_one_score = score
 
-    def set_edge_cost(self,first_node):
-
-        total_cost = 0
-
-        for edge in first_node.edges:
-            if edge.checkedOnce:
-                total_cost += max(edge.one_to_other_cost, edge.other_to_one_cost)
-
+    def set_cost(self,first_node, total_cost):
         if first_node == self.one:
             self.one_to_other_cost = total_cost
         else:
             self.other_to_one_cost = total_cost
 
-        self.checkedOnce = True
-    '''
     def get_other_node(self, node: TreeNode):
         if node == self.one:
             return self.other
         return self.one
-    '''
+
 
 
 class Tree:
@@ -138,12 +123,7 @@ class Tree:
 
         for node in self.nodes:
             string += ("Node " + str(node.point) + "\'s reward is " + str(node.reward) + "\n")
-
-        string += "\n"
-
-        for edge in self.edges:
-            string += ("The edge between node " + str(edge.one.point)
-                       + " and node " + str(edge.other.point) + " has cost " + str(edge.cost) + "\n")
+            string += ("Node " + str(node.point) + "\'s cost is " + str(node.cost) + "\n")
 
         return string
 

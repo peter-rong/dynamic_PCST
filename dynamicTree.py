@@ -1,17 +1,16 @@
-from random import uniform, randint
-from tree import TreeNode, TreeEdge, Tree
-from algorithm import Algorithm
+#this file is for recording TODOS for dynamic tree implementation and tests
 
+#Done TODO algorithm implementation
 
+#DONE TODO (added) change from edge costs to node costs
 
+#Done TODO test with toy example
 
-#this file is for the implementation of dynamic Tree
+#Done TODO test our bigger example (randomized tree)
 
-#TODO algorithm implementation
+#TODO turn skeleton initial graph to node graph (PCST_solver)
 
-
-
-#TODO visualization
+#TODO visualization (napari)
 
 #TODO cross validate with dapcstp solver
 
