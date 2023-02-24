@@ -44,6 +44,7 @@ class Algorithm:
 
         for node in input_tree.nodes:
             node.score = node.reward
+            node.total_cost = node.cost
             node.visitOnce = False
             total_score += node.reward
             total_cost += node.cost
@@ -82,11 +83,11 @@ class Algorithm:
             for edge in temp_node.edges:
                 if temp_node == edge.one:
                     edge.other_to_one_score = edge.other.score
-                    edge.other_to_one_cost = edge.other.cost
+                    edge.other_to_one_cost = edge.other.total_cost
 
                 else:
                     edge.one_to_other_score = edge.one.score
-                    edge.one_to_other_cost = edge.one.cost
+                    edge.one_to_other_cost = edge.one.total_cost
 
         if len(temp_leaves) == 2:
             node_one, node_two = temp_leaves[0], temp_leaves[1]
@@ -94,7 +95,7 @@ class Algorithm:
             for edge in node_one.edges:
                 if edge.get_other_node(node_one) == node_two:
                     edge.one_to_other_score = edge.one.score
-                    edge.one_to_other_cost = edge.one.cost
+                    edge.one_to_other_cost = edge.one.total_cost
 
 
         # trace back
@@ -120,7 +121,7 @@ class Algorithm:
                 min_alpha = edge.other_to_one_score / edge.other_to_one_cost
                 min_edge = edge
 
-        self.alpha_list.append(self.alpha_list[-1] + min_alpha)
+        self.alpha_list.append(min_alpha)
         new_tree = self.shrink_tree(input_tree, min_alpha, min_edge)
         self.tree_list.append(copy.deepcopy(new_tree))
 

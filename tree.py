@@ -45,7 +45,7 @@ class TreeNode:
                 e.set_score(temp_node, temp_node.score)
                 e.set_cost(temp_node, temp_node.total_cost)
                 self.score += temp_node.score
-                self.cost += temp_node.cost
+                self.total_cost += temp_node.total_cost
 
 
 class TreeEdge:
