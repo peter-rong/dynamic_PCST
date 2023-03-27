@@ -16,4 +16,3 @@
 
 #TODO cross validate with own solver
 
-
