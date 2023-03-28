@@ -1,4 +1,5 @@
 import sys
+import math
 class DynamicTreeNode:
 
     def __init__(self, point, r: float, c: float):
@@ -12,7 +13,9 @@ class DynamicTreeNode:
         self.score = r  # temporary score
         self.total_cost = c  # temporary cost
         self.edges = list()
-        self.path_ids = []
+
+        self.index = -1 #TODO
+        self.drop_threshold = math.inf
 
     def add_edge(self, edge):
         self.edges.append(edge)
@@ -88,7 +91,9 @@ class DynamicTree:
 
         # index doesn't change
         for i in range(len(points)):
-            self.nodes.append(DynamicTreeNode(points[i], reward_list[i], reward_list[i] == sys.maxsize))
+            newNode = DynamicTreeNode(points[i], reward_list[i], reward_list[i] == sys.maxsize)
+            newNode.index = len(self.nodes)
+            self.nodes.append(newNode)
 
         for i in range(len(edgeIndex)):
             firstIndex = edgeIndex[i][0]
@@ -111,6 +116,7 @@ class DynamicTree:
         return leaves_list
 
     def add_node(self, node: DynamicTreeNode):
+        node.index = len(self.nodes)
         self.nodes.append(node)
 
     def add_edge(self, edge: DynamicTreeEdge):
