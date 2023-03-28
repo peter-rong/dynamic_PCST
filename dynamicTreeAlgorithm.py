@@ -1,4 +1,4 @@
-import tree
+import dynamicTree
 import math
 import copy
 from collections import deque
@@ -6,7 +6,7 @@ import time
 
 class Algorithm:
 
-    def __init__(self, current_tree: tree.Tree):
+    def __init__(self, current_tree: dynamicTree.DynamicTree):
         self.tree = current_tree
         self.alpha_list = [0]
         self.tree_list = [copy.deepcopy(self.tree)]
@@ -25,11 +25,11 @@ class Algorithm:
     def print_result(self):
         for i in range(len(self.alpha_list)):
             print("alpha = " + str(self.alpha_list[i]) +
-                  " and tree has " + str(len(self.tree_list[i].nodes)) + " nodes")
+                  " and tree has " + str(len(self.tree_list[i].nodes)) + " nodes"
+                  +" and has "+ str(len(self.tree_list[i].edges)) + " edges")
 
     def execute(self, input_tree):
 
-        print(len(input_tree.get_leaves()))
         start = time.time()
         total_score, total_cost = 0, 0
 
@@ -67,6 +67,7 @@ class Algorithm:
 
             leaves = input_tree.get_leaves()
 
+
         # corner case of ending with one node
         if len(temp_leaves) == 1:
 
@@ -94,6 +95,11 @@ class Algorithm:
 
         for edge in input_tree.edges:
 
+            if edge.one_to_other_score == 0 and edge.other_to_one_score == 0:
+                print(edge.one_to_other_cost)
+                print(edge.other_to_one_cost)
+                print("here")
+
             if edge.one_to_other_score == 0:
                 edge.one_to_other_score = total_score - edge.other_to_one_score
                 edge.one_to_other_cost = total_cost - edge.other_to_one_cost
@@ -102,12 +108,13 @@ class Algorithm:
                 edge.other_to_one_score = total_score - edge.one_to_other_score
                 edge.other_to_one_cost = total_cost - edge.one_to_other_cost
 
+
             # find minimum alpha and the edge
-            if min_alpha > edge.one_to_other_score / edge.one_to_other_cost:
+            if edge.one_to_other_cost != 0 and min_alpha > edge.one_to_other_score / edge.one_to_other_cost:
                 min_alpha = edge.one_to_other_score / edge.one_to_other_cost
                 min_edge = edge
 
-            if min_alpha > edge.other_to_one_score / edge.other_to_one_cost:
+            if edge.other_to_one_cost != 0 and min_alpha > edge.other_to_one_score / edge.other_to_one_cost:
                 min_alpha = edge.other_to_one_score / edge.other_to_one_cost
                 min_edge = edge
 
@@ -115,24 +122,28 @@ class Algorithm:
         new_tree = self.shrink_tree(input_tree, min_alpha, min_edge)
         self.tree_list.append(copy.deepcopy(new_tree))
 
+
         iter_counter = 1
         while len(new_tree.edges) > 1:
+
             iter_counter += 1
-            print(len(new_tree.edges))
             min_alpha = math.inf
             min_edge = None
 
             for edge in new_tree.edges:
 
                 # find minimum alpha and the edge
-                if min_alpha > edge.one_to_other_score / edge.one_to_other_cost:
+                if edge.one_to_other_cost != 0 and min_alpha > edge.one_to_other_score / edge.one_to_other_cost:
                     min_alpha = edge.one_to_other_score / edge.one_to_other_cost
                     min_edge = edge
 
-                if min_alpha > edge.other_to_one_score / edge.other_to_one_cost:
+                if edge.other_to_one_cost != 0 and min_alpha > edge.other_to_one_score / edge.other_to_one_cost:
                     min_alpha = edge.other_to_one_score / edge.other_to_one_cost
                     min_edge = edge
 
+            if min_edge is None:
+                print("break")
+                break
             self.alpha_list.append(min_alpha+self.alpha_list[-1])
             new_tree = self.shrink_tree(new_tree, min_alpha, min_edge)
             self.tree_list.append(copy.deepcopy(new_tree))
@@ -194,18 +205,19 @@ class Algorithm:
             queue.append([edge, safe_node])
 
         while queue:
-
             curr = queue.popleft()
             curr_edge, curr_node = curr[0], curr[1]
 
             if curr_node == curr_edge.one:
                 curr_edge.one_to_other_cost -= min_edge_cost
-                if curr_edge.one_to_other_cost< 0:
-                    print("wrong here" + str(curr_edge.one_to_other_cost))
+                if curr_edge.one_to_other_cost < 0:
+                    print("float-point error " + str(curr_edge.one_to_other_cost))
+                    curr_edge.one_to_other_cost = 0 #amendament from value lost in float point calculation
             elif curr_node == curr_edge.other:
                 curr_edge.other_to_one_cost -= min_edge_cost
-                if curr_edge.other_to_one_cost< 0:
-                    print("wrong here2"+ str(curr_edge.other_to_one_cost))
+                if curr_edge.other_to_one_cost < 0:
+                    print("float-point error "+ str(curr_edge.other_to_one_cost))
+                    curr_edge.other_to_one_cost = 0  # amendament from value lost in float point calculation
             else:
                 print("so wrong")
 

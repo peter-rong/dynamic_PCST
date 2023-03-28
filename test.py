@@ -1,7 +1,30 @@
-from tree import Tree, TreeNode, TreeEdge
-from algorithm import Algorithm
-from randTree import rand_between_bounds, rand_tree
+import nodePathGraph
+import math
+from dynamicTreeAlgorithm import Algorithm
+
+file = open('ma3.txt', 'r')
+lines = file.readlines()
+node_count = int(lines[0])
+points = []
+
+for i in range(1, node_count +1):
+    line = lines[i]
+    p1, p2 = float(line.split()[0]), float(line.split()[1])
+    points.append([p1,p2])
+
+edge_ids = []
+angles = []
+
+for j in range(node_count+2, len(lines)):
+    line = lines[j]
+    id1, id2, angle = int(line.split()[0]), int(line.split()[1]), float(line.split()[2])
+    edge_ids.append([id1,id2])
+    angles.append(angle)
+
+initial_graph = nodePathGraph.NodePathGraph(points, edge_ids, angles)
+dynamic_tree = initial_graph.to_dynamic_tree_junction()
 
 
-test_tree = rand_tree(2000, [1, 6], [2, 8], 3)
-Algorithm(test_tree).execute(test_tree)
+Algorithm(dynamic_tree).execute(dynamic_tree)
+
+
