@@ -31,19 +31,9 @@ newAlgo.execute(dynamic_tree)
 
 #outputing file
 with open("output.txt", 'w') as f:
-    f.write(str(len(initial_graph.nodes)))
-    f.write('\n')
-
-    for node in initial_graph.nodes:
-        f.write(str(node.point[0])+' '+str(node.point[1]))
-        f.write('\n')
-
-    f.write(str(len(initial_graph.paths)))
-    f.write('\n')
 
     for path in initial_graph.paths:
-        f.write(str(path.one.index) +' '+str(path.other.index)+' '
-                +str(newAlgo.tree.nodes[path.TreeNodeIndex].drop_threshold))
+        f.write(str(newAlgo.tree.nodes[path.TreeNodeIndex].drop_threshold))
         f.write('\n')
 
 f.close()
