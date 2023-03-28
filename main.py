@@ -2,7 +2,9 @@ import nodePathGraph
 import math
 from dynamicTreeAlgorithm import Algorithm
 
-file = open('ma3.txt', 'r')
+filename = input("Enter file name: ")
+
+file = open(filename, 'r')
 lines = file.readlines()
 node_count = int(lines[0])
 points = []
@@ -24,7 +26,24 @@ for j in range(node_count+2, len(lines)):
 initial_graph = nodePathGraph.NodePathGraph(points, edge_ids, angles)
 dynamic_tree = initial_graph.to_dynamic_tree_junction()
 
+newAlgo = Algorithm(dynamic_tree)
+newAlgo.execute(dynamic_tree)
 
-Algorithm(dynamic_tree).execute(dynamic_tree)
+#outputing file
+with open("output.txt", 'w') as f:
+    f.write(str(len(initial_graph.nodes)))
+    f.write('\n')
 
+    for node in initial_graph.nodes:
+        f.write(str(node.point[0])+' '+str(node.point[1]))
+        f.write('\n')
 
+    f.write(str(len(initial_graph.paths)))
+    f.write('\n')
+
+    for path in initial_graph.paths:
+        f.write(str(path.one.index) +' '+str(path.other.index)+' '
+                +str(newAlgo.tree.nodes[path.TreeNodeIndex].drop_threshold))
+        f.write('\n')
+
+f.close()

@@ -7,7 +7,7 @@ import time
 class Algorithm:
 
     def __init__(self, current_tree: dynamicTree.DynamicTree):
-        self.tree = current_tree
+        self.tree = copy.deepcopy(current_tree)
         self.alpha_list = [0]
         self.tree_list = [copy.deepcopy(self.tree)]
 
@@ -122,7 +122,6 @@ class Algorithm:
         new_tree = self.shrink_tree(input_tree, min_alpha, min_edge)
         self.tree_list.append(copy.deepcopy(new_tree))
 
-
         iter_counter = 1
         while len(new_tree.edges) > 1:
 
@@ -156,10 +155,10 @@ class Algorithm:
 
         return self.alpha_list, self.tree_list
 
-
     # shrink the tree after increasing alpha
     def shrink_tree(self, input_tree, alpha, min_edge):
 
+        total_alpha = self.alpha_list[-1]
         tree = input_tree
         queue = deque()
         min_edge_cost = 0
@@ -193,7 +192,7 @@ class Algorithm:
                     other_node.edges.remove(edge)
             curr_node.edges = []
             tree.nodes.remove(curr_node)
-
+            self.tree.nodes[curr_node.index].drop_threshold = total_alpha
 
         for edge in tree.edges:
             edge.one_to_other_score -= alpha * edge.one_to_other_cost
