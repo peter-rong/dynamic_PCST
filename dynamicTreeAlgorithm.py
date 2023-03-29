@@ -7,9 +7,8 @@ import time
 class Algorithm:
 
     def __init__(self, current_tree: dynamicTree.DynamicTree):
-        self.tree = copy.deepcopy(current_tree)
+        self.tree = current_tree.duplicate()
         self.alpha_list = [0]
-        self.tree_list = [copy.deepcopy(self.tree)]
 
     def print_edges(self, input_tree):
         for e in input_tree.edges:
@@ -21,12 +20,6 @@ class Algorithm:
                   + str(e.one.point) + " is " + str(e.other_to_one_score))
             print("Edge cost between " + str(e.other.point) + " and "
                   + str(e.one.point) + " is " + str(e.other_to_one_cost))
-
-    def print_result(self):
-        for i in range(len(self.alpha_list)):
-            print("alpha = " + str(self.alpha_list[i]) +
-                  " and tree has " + str(len(self.tree_list[i].nodes)) + " nodes"
-                  +" and has "+ str(len(self.tree_list[i].edges)) + " edges")
 
     def execute(self, input_tree):
 
@@ -120,7 +113,6 @@ class Algorithm:
 
         self.alpha_list.append(min_alpha+self.alpha_list[-1])
         new_tree = self.shrink_tree(input_tree, min_alpha, min_edge)
-        self.tree_list.append(copy.deepcopy(new_tree))
 
         iter_counter = 1
         while len(new_tree.edges) > 1:
@@ -145,15 +137,13 @@ class Algorithm:
                 break
             self.alpha_list.append(min_alpha+self.alpha_list[-1])
             new_tree = self.shrink_tree(new_tree, min_alpha, min_edge)
-            self.tree_list.append(copy.deepcopy(new_tree))
 
-        self.print_result()
 
         end = time.time()
         print("Took " +str(iter_counter)+ " iterations")
         print("Time spent: " + str(end - start))
 
-        return self.alpha_list, self.tree_list
+        return self.alpha_list
 
     # shrink the tree after increasing alpha
     def shrink_tree(self, input_tree, alpha, min_edge):
@@ -210,12 +200,10 @@ class Algorithm:
             if curr_node == curr_edge.one:
                 curr_edge.one_to_other_cost -= min_edge_cost
                 if curr_edge.one_to_other_cost < 0:
-                    print("float-point error " + str(curr_edge.one_to_other_cost))
                     curr_edge.one_to_other_cost = 0 #amendament from value lost in float point calculation
             elif curr_node == curr_edge.other:
                 curr_edge.other_to_one_cost -= min_edge_cost
                 if curr_edge.other_to_one_cost < 0:
-                    print("float-point error "+ str(curr_edge.other_to_one_cost))
                     curr_edge.other_to_one_cost = 0  # amendament from value lost in float point calculation
             else:
                 print("so wrong")
