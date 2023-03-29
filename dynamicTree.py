@@ -91,17 +91,31 @@ class DynamicTree:
 
         # index doesn't change
         for i in range(len(points)):
-            newNode = DynamicTreeNode(points[i], reward_list[i], reward_list[i] == sys.maxsize)
+            newNode = DynamicTreeNode(points[i], reward_list[i], cost_list[i])
             newNode.index = len(self.nodes)
             self.nodes.append(newNode)
 
         for i in range(len(edgeIndex)):
             firstIndex = edgeIndex[i][0]
             secondIndex = edgeIndex[i][1]
-            edge = DynamicTreeEdge(cost_list[i], self.nodes[firstIndex], self.nodes[secondIndex])
+            edge = DynamicTreeEdge(self.nodes[firstIndex], self.nodes[secondIndex])
             self.nodes[firstIndex].add_edge(edge)
             self.nodes[secondIndex].add_edge(edge)
             self.edges.append(edge)
+
+    def duplicate(self):
+
+        newTree = DynamicTree([],[],[],[])
+
+        for node in self.nodes:
+            newNode = DynamicTreeNode(node.point, node.reward, node.cost)
+            newTree.add_node(newNode)
+
+        for edge in self.edges:
+            newEdge = DynamicTreeEdge(newTree.nodes[edge.one.index], newTree.nodes[edge.other.index])
+            newTree.add_edge(newEdge)
+
+        return newTree
 
     def get_leaves(self):
         leaves_list = list()
