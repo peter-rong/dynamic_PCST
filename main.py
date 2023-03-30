@@ -1,8 +1,8 @@
 import nodePathGraph
-import math
 from dynamicTreeAlgorithm import Algorithm
+import sys
 
-filename = input("Enter file name: ")
+filename = sys.argv[1]
 
 file = open(filename, 'r')
 lines = file.readlines()
