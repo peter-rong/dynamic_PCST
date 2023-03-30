@@ -58,10 +58,10 @@ class DynamicTreeEdge:
     def __init__(self, one: DynamicTreeNode, other: DynamicTreeNode):
         self.one = one
         self.other = other
-        self.one_to_other_score = 0
-        self.one_to_other_cost = 0
-        self.other_to_one_score = 0
-        self.other_to_one_cost = 0
+        self.one_to_other_score = None
+        self.one_to_other_cost = None
+        self.other_to_one_score = None
+        self.other_to_one_cost = None
 
     def set_score(self, first_node, score):
 

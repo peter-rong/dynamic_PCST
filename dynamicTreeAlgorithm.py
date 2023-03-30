@@ -29,15 +29,16 @@ class Algorithm:
         for node in input_tree.nodes:
             node.score = node.reward
             node.total_cost = node.cost
+
             node.visitOnce = False
             total_score += node.reward
             total_cost += node.cost
 
         for edge in input_tree.edges:
-            edge.one_to_other_score = 0
-            edge.one_to_other_cost = 0
-            edge.other_to_one_score = 0
-            edge.other_to_one_cost = 0
+            edge.one_to_other_score = None
+            edge.one_to_other_cost = None
+            edge.other_to_one_score = None
+            edge.other_to_one_cost = None
 
         leaves = input_tree.get_leaves()
 
@@ -59,7 +60,6 @@ class Algorithm:
                 leaf.visitOnce = True
 
             leaves = input_tree.get_leaves()
-
 
         # corner case of ending with one node
         if len(temp_leaves) == 1:
@@ -88,19 +88,16 @@ class Algorithm:
 
         for edge in input_tree.edges:
 
-            if edge.one_to_other_score == 0 and edge.other_to_one_score == 0:
-                print(edge.one_to_other_cost)
-                print(edge.other_to_one_cost)
-                print("here")
+            if edge.one_to_other_score == None and edge.other_to_one_score == None:
+                print("Not Possible")
 
-            if edge.one_to_other_score == 0:
+            elif edge.one_to_other_score == None:
                 edge.one_to_other_score = total_score - edge.other_to_one_score
                 edge.one_to_other_cost = total_cost - edge.other_to_one_cost
 
-            if edge.other_to_one_score == 0:
+            elif edge.other_to_one_score == None:
                 edge.other_to_one_score = total_score - edge.one_to_other_score
                 edge.other_to_one_cost = total_cost - edge.one_to_other_cost
-
 
             # find minimum alpha and the edge
             if edge.one_to_other_cost != 0 and min_alpha > edge.one_to_other_score / edge.one_to_other_cost:
@@ -164,7 +161,7 @@ class Algorithm:
             queue.append(min_edge.other)
             min_edge_cost = min_edge.other_to_one_cost
         else:
-            print("This is very wrong")
+            print("Also not possible")
 
         while queue:
             curr_node = queue.popleft()
@@ -206,7 +203,7 @@ class Algorithm:
                 if curr_edge.other_to_one_cost < 0:
                     curr_edge.other_to_one_cost = 0  # amendament from value lost in float point calculation
             else:
-                print("so wrong")
+                print("Also not possible")
 
             next_node = curr_edge.get_other_node(curr_node)
 

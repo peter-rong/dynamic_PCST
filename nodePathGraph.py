@@ -46,7 +46,7 @@ class Path:
         self.theta = angle
         self.isCore = True
         self.inSol = False
-        self.TreeNodeIndex = None #TODO needed
+        self.TreeNodeIndex = None
 
     def mid_point(self):
         x = (self.one.point[0] + self.other.point[0]) / 2
@@ -76,6 +76,7 @@ class NodePathGraph:
             node1 = self.nodes[pid1]
             node2 = self.nodes[pid2]
             path = Path(node1, node2, l, theta)
+
             node1.add_path(path)
             node2.add_path(path)
             self.paths.append(path)
@@ -156,8 +157,8 @@ class NodePathGraph:
             if not path.isCore:
                 new_node = DynamicTreeNode(path.mid_point(), (math.sin(path.theta / 2) * path.length), path.length)
                 dynamicTree.add_node(new_node)
-                path.TreeNodeIndex = new_node.index
 
+                path.TreeNodeIndex = new_node.index
                 path_to_node[path] = new_node
 
         for node in self.nodes:
