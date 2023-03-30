@@ -3,8 +3,8 @@ This is the repo for a mutant problem to the traditional price collecting steine
 
 # Usage: 
 
-python3 main.py
-And will then be prompted to enter the text file. 
+python3 main.py filename.txt
+"filename.txt" is the input text file that contains information about the Medial Axis. 
 
 # Output: 
 
