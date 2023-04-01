@@ -131,7 +131,7 @@ class NodePathGraph:
         core_node_y = 0
 
         for path in self.paths:
-            total_reward += (math.sin(path.theta / 2) * path.length)
+            total_reward += (math.sin(path.theta) * path.length)
             min_cost = min(min_cost, path.length)
             if path.isCore:
                 path.one.isCore = True
