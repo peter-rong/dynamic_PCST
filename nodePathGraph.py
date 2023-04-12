@@ -155,7 +155,7 @@ class NodePathGraph:
 
         for path in self.paths:
             if not path.isCore:
-                new_node = DynamicTreeNode(path.mid_point(), (math.sin(path.theta / 2) * path.length), path.length)
+                new_node = DynamicTreeNode(path.mid_point(), (math.sin(path.theta) * path.length), path.length)
                 dynamicTree.add_node(new_node)
 
                 path.TreeNodeIndex = new_node.index
