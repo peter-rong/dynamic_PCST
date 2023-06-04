@@ -4,6 +4,7 @@ import copy
 from collections import deque
 import time
 
+
 class Algorithm:
 
     def __init__(self, current_tree: dynamicTree.DynamicTree):
@@ -61,6 +62,16 @@ class Algorithm:
 
             leaves = input_tree.get_leaves()
 
+        for e in input_tree.edges:
+            if e.one_to_other_score is None and e.other_to_one_score is None:
+                e.one_to_other_score = edge.one.score
+                e.one_to_other_cost = edge.one.total_cost
+                print("Should be printed at most once per component")
+
+        '''
+
+        #This commented portion is when the input shape is guaranteed to be one connected component
+        
         # corner case of ending with one node
         if len(temp_leaves) == 1:
 
@@ -81,6 +92,7 @@ class Algorithm:
                 if edge.get_other_node(node_one) == node_two:
                     edge.one_to_other_score = edge.one.score
                     edge.one_to_other_cost = edge.one.total_cost
+        '''
 
         # trace back
         min_alpha = math.inf
@@ -108,7 +120,7 @@ class Algorithm:
                 min_alpha = edge.other_to_one_score / edge.other_to_one_cost
                 min_edge = edge
 
-        self.alpha_list.append(min_alpha+self.alpha_list[-1])
+        self.alpha_list.append(min_alpha + self.alpha_list[-1])
         new_tree = self.shrink_tree(input_tree, min_alpha, min_edge)
 
         iter_counter = 1
@@ -132,12 +144,11 @@ class Algorithm:
             if min_edge is None:
                 print("break")
                 break
-            self.alpha_list.append(min_alpha+self.alpha_list[-1])
+            self.alpha_list.append(min_alpha + self.alpha_list[-1])
             new_tree = self.shrink_tree(new_tree, min_alpha, min_edge)
 
-
         end = time.time()
-        print("Took " +str(iter_counter)+ " iterations")
+        print("Took " + str(iter_counter) + " iterations")
         print("Time spent: " + str(end - start))
 
         return self.alpha_list
@@ -197,11 +208,11 @@ class Algorithm:
             if curr_node == curr_edge.one:
                 curr_edge.one_to_other_cost -= min_edge_cost
                 if curr_edge.one_to_other_cost < 0:
-                    curr_edge.one_to_other_cost = 0 #amendament from value lost in float point calculation
+                    curr_edge.one_to_other_cost = 0  # amendment from value lost in float point calculation
             elif curr_node == curr_edge.other:
                 curr_edge.other_to_one_cost -= min_edge_cost
                 if curr_edge.other_to_one_cost < 0:
-                    curr_edge.other_to_one_cost = 0  # amendament from value lost in float point calculation
+                    curr_edge.other_to_one_cost = 0  # amendment from value lost in float point calculation
             else:
                 print("Also not possible")
 

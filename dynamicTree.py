@@ -25,7 +25,7 @@ class DynamicTreeNode:
         if self == edge.one: return edge.other
         return edge.one
 
-    def get_unvisited_neigbor_count(self):
+    def get_unvisited_neighbor_count(self):
         count = 0
         for e in self.edges:
             if not self.get_other_node(e).visitOnce:
@@ -124,7 +124,7 @@ class DynamicTree:
             if node.visitOnce:
                 continue
 
-            if node.get_unvisited_neigbor_count() < 2:
+            if node.get_unvisited_neighbor_count() < 2:
                 leaves_list.append(node)
 
         return leaves_list
