@@ -71,7 +71,7 @@ class Algorithm:
         '''
 
         #This commented portion is when the input shape is guaranteed to be one connected component
-        
+
         # corner case of ending with one node
         if len(temp_leaves) == 1:
 
@@ -162,12 +162,13 @@ class Algorithm:
         min_edge_cost = 0
 
         safe_node = None
-        if alpha == (min_edge.one_to_other_score / min_edge.one_to_other_cost):
+
+        if min_edge.one_to_other_cost != 0 and alpha == (min_edge.one_to_other_score / min_edge.one_to_other_cost):
             safe_node = min_edge.other
             queue.append(min_edge.one)
             min_edge_cost = min_edge.one_to_other_cost
 
-        elif alpha == (min_edge.other_to_one_score / min_edge.other_to_one_cost):
+        elif min_edge.other_to_one_cost != 0 and alpha == (min_edge.other_to_one_score / min_edge.other_to_one_cost):
             safe_node = min_edge.one
             queue.append(min_edge.other)
             min_edge_cost = min_edge.other_to_one_cost
@@ -195,6 +196,7 @@ class Algorithm:
         for edge in tree.edges:
             edge.one_to_other_score -= alpha * edge.one_to_other_cost
             edge.other_to_one_score -= alpha * edge.other_to_one_cost
+
 
         queue = deque()
 
