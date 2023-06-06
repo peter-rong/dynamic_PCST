@@ -24,10 +24,42 @@ for j in range(node_count+2, len(lines)):
     angles.append(angle)
 
 initial_graph = nodePathGraph.NodePathGraph(points, edge_ids, angles)
+
+components = initial_graph.to_components()
+
+tree_list = []
+for component in components:
+    dynamic_tree = component.to_dynamic_tree_junction()
+    newAlgo = Algorithm(dynamic_tree)
+    newAlgo.execute(dynamic_tree)
+
+    tree_list.append(dynamic_tree)
+
+    for node in newAlgo.tree.nodes:
+
+        if node.path_index >= 0:
+            initial_graph.paths[node.path_index].drop_threshold = node.drop_threshold
+            #print(node.drop_threshold)
+
+with open("output.txt", 'w') as f:
+
+    for path in initial_graph.paths:
+        if path.isCore:
+            f.write("inf")
+        else:
+            f.write(str(path.drop_threshold))
+        f.write('\n')
+
+f.close()
+
+
+'''
+
 dynamic_tree = initial_graph.to_dynamic_tree_junction()
 
 newAlgo = Algorithm(dynamic_tree)
 newAlgo.execute(dynamic_tree)
+
 
 #outputing file
 with open("output.txt", 'w') as f:
@@ -37,3 +69,4 @@ with open("output.txt", 'w') as f:
         f.write('\n')
 
 f.close()
+'''

@@ -24,7 +24,38 @@ class Algorithm:
 
     def execute(self, input_tree):
 
+        # complete component total cost and total score
+
         start = time.time()
+        '''
+
+        for node in input_tree.nodes:
+            if not node.visitOnce:
+
+                total_cost, total_score = 0, 0
+
+                print("Print once per component")
+
+                queue = deque()
+                queue.append(node)
+                component_list = []
+
+                while queue:
+                    curr_node = queue.popleft()
+                    curr_node.visitOnce = True
+                    component_list.append(curr_node)
+
+                    total_cost += curr_node.cost
+                    total_score += curr_node.reward
+
+                    for edge in curr_node.edges:
+                        if not curr_node.get_other_node(edge).visitOnce:
+                            queue.append(curr_node.get_other_node(edge))
+
+                for component_node in component_list:
+                    component_node.component_total_cost = total_cost
+                    component_node.component_total_score = total_score
+        '''
         total_score, total_cost = 0, 0
 
         for node in input_tree.nodes:
@@ -62,15 +93,15 @@ class Algorithm:
 
             leaves = input_tree.get_leaves()
 
+        '''
         for e in input_tree.edges:
             if e.one_to_other_score is None and e.other_to_one_score is None:
                 e.one_to_other_score = edge.one.score
                 e.one_to_other_cost = edge.one.total_cost
-                print("Should be printed at most once per component")
 
         '''
 
-        #This commented portion is when the input shape is guaranteed to be one connected component
+        # This commented portion is when the input shape is guaranteed to be one connected component
 
         # corner case of ending with one node
         if len(temp_leaves) == 1:
@@ -92,7 +123,6 @@ class Algorithm:
                 if edge.get_other_node(node_one) == node_two:
                     edge.one_to_other_score = edge.one.score
                     edge.one_to_other_cost = edge.one.total_cost
-        '''
 
         # trace back
         min_alpha = math.inf
@@ -100,14 +130,14 @@ class Algorithm:
 
         for edge in input_tree.edges:
 
-            if edge.one_to_other_score == None and edge.other_to_one_score == None:
+            if edge.one_to_other_score is None and edge.other_to_one_score is None:
                 print("Not Possible")
 
-            elif edge.one_to_other_score == None:
+            elif edge.one_to_other_score is None:
                 edge.one_to_other_score = total_score - edge.other_to_one_score
                 edge.one_to_other_cost = total_cost - edge.other_to_one_cost
 
-            elif edge.other_to_one_score == None:
+            elif edge.other_to_one_score is None:
                 edge.other_to_one_score = total_score - edge.one_to_other_score
                 edge.other_to_one_cost = total_cost - edge.one_to_other_cost
 
@@ -144,6 +174,7 @@ class Algorithm:
             if min_edge is None:
                 print("break")
                 break
+
             self.alpha_list.append(min_alpha + self.alpha_list[-1])
             new_tree = self.shrink_tree(new_tree, min_alpha, min_edge)
 
@@ -181,7 +212,6 @@ class Algorithm:
             for edge in curr_node.edges:
 
                 if edge in tree.edges:
-
                     tree.edges.remove(edge)
 
                     other_node = curr_node.get_other_node(edge)
@@ -189,6 +219,7 @@ class Algorithm:
                     if other_node != safe_node:
                         queue.append(other_node)
                     other_node.edges.remove(edge)
+
             curr_node.edges = []
             tree.nodes.remove(curr_node)
             self.tree.nodes[curr_node.index].drop_threshold = total_alpha
@@ -196,7 +227,6 @@ class Algorithm:
         for edge in tree.edges:
             edge.one_to_other_score -= alpha * edge.one_to_other_cost
             edge.other_to_one_score -= alpha * edge.other_to_one_cost
-
 
         queue = deque()
 
@@ -208,6 +238,7 @@ class Algorithm:
             curr_edge, curr_node = curr[0], curr[1]
 
             if curr_node == curr_edge.one:
+
                 curr_edge.one_to_other_cost -= min_edge_cost
                 if curr_edge.one_to_other_cost < 0:
                     curr_edge.one_to_other_cost = 0  # amendment from value lost in float point calculation

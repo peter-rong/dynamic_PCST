@@ -1,5 +1,7 @@
 import sys
 import math
+
+
 class DynamicTreeNode:
 
     def __init__(self, point, r: float, c: float):
@@ -14,7 +16,8 @@ class DynamicTreeNode:
         self.total_cost = c  # temporary cost
         self.edges = list()
 
-        self.index = -1 #TODO
+        self.index = -1
+        self.path_index = -1 # junction node (core's index is -2)
         self.drop_threshold = math.inf
 
     def add_edge(self, edge):
@@ -92,7 +95,7 @@ class DynamicTree:
         # index doesn't change
         for i in range(len(points)):
             newNode = DynamicTreeNode(points[i], reward_list[i], cost_list[i])
-            newNode.index = len(self.nodes)
+            #newNode.index = len(self.nodes)
             self.nodes.append(newNode)
 
         for i in range(len(edgeIndex)):
@@ -105,13 +108,19 @@ class DynamicTree:
 
     def duplicate(self):
 
-        newTree = DynamicTree([],[],[],[])
+        newTree = DynamicTree([], [], [], [])
 
         for node in self.nodes:
             newNode = DynamicTreeNode(node.point, node.reward, node.cost)
             newTree.add_node(newNode)
 
+            newNode.path_index = node.path_index
+
         for edge in self.edges:
+
+            #print(edge.one.index)
+
+            #print(newTree.node)
             newEdge = DynamicTreeEdge(newTree.nodes[edge.one.index], newTree.nodes[edge.other.index])
             newTree.add_edge(newEdge)
 
@@ -147,7 +156,7 @@ class DynamicTree:
         point2 = edge.other.point
         for e in self.edges:
             if (e.one.point[0] == point1[0] and e.other.point[0] == point2[0]
-                and e.one.point[1] == point1[1] and e.other.point[1] == point2[1])\
+                and e.one.point[1] == point1[1] and e.other.point[1] == point2[1]) \
                     or (e.one.point[0] == point2[0] and e.other.point[0] == point2[0]
                         and e.one.point[1] == point2[1] and e.other.point[1] == point2[1]):
                 return True
