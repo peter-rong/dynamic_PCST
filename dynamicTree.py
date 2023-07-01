@@ -118,9 +118,6 @@ class DynamicTree:
 
         for edge in self.edges:
 
-            #print(edge.one.index)
-
-            #print(newTree.node)
             newEdge = DynamicTreeEdge(newTree.nodes[edge.one.index], newTree.nodes[edge.other.index])
             newTree.add_edge(newEdge)
 
