@@ -27,35 +27,7 @@ class Algorithm:
         # complete component total cost and total score
 
         start = time.time()
-        '''
 
-        for node in input_tree.nodes:
-            if not node.visitOnce:
-
-                total_cost, total_score = 0, 0
-
-                print("Print once per component")
-
-                queue = deque()
-                queue.append(node)
-                component_list = []
-
-                while queue:
-                    curr_node = queue.popleft()
-                    curr_node.visitOnce = True
-                    component_list.append(curr_node)
-
-                    total_cost += curr_node.cost
-                    total_score += curr_node.reward
-
-                    for edge in curr_node.edges:
-                        if not curr_node.get_other_node(edge).visitOnce:
-                            queue.append(curr_node.get_other_node(edge))
-
-                for component_node in component_list:
-                    component_node.component_total_cost = total_cost
-                    component_node.component_total_score = total_score
-        '''
         total_score, total_cost = 0, 0
 
         for node in input_tree.nodes:
@@ -71,12 +43,6 @@ class Algorithm:
             edge.one_to_other_cost = None
             edge.other_to_one_score = None
             edge.other_to_one_cost = None
-
-        leaves = input_tree.get_leaves()
-
-        # first level of leaves
-        for leaf in leaves:
-            leaf.visitOnce = True
 
         leaves = input_tree.get_leaves()
         temp_leaves = leaves
@@ -124,9 +90,12 @@ class Algorithm:
                     edge.one_to_other_score = edge.one.score
                     edge.one_to_other_cost = edge.one.total_cost
 
+        print(len(temp_leaves))
         # trace back
         min_alpha = math.inf
         min_edge = None
+
+        print(len(input_tree.edges))
 
         for edge in input_tree.edges:
 
@@ -150,9 +119,8 @@ class Algorithm:
                 min_alpha = edge.other_to_one_score / edge.other_to_one_cost
                 min_edge = edge
 
-        #this tree has no edge (is a single node)
+        # this tree has no edge (is a single node)
         if not min_edge:
-
             print("This component is a single node.")
             return self.alpha_list
 
