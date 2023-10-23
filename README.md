@@ -11,7 +11,8 @@ The output file has the format:
 # Usage: 
 
 python3 main.py filename.txt
-"filename.txt" is the input text file that contains information about the Medial Axis. 
+
+("filename.txt" is the input text file that contains information about the Medial Axis.)
 
 # Output file format: 
 
