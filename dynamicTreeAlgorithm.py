@@ -150,11 +150,17 @@ class Algorithm:
                 min_alpha = edge.other_to_one_score / edge.other_to_one_cost
                 min_edge = edge
 
+        #this tree has no edge (is a single node)
+        if not min_edge:
+
+            print("This component is a single node.")
+            return self.alpha_list
+
         self.alpha_list.append(min_alpha + self.alpha_list[-1])
         new_tree = self.shrink_tree(input_tree, min_alpha, min_edge)
 
         iter_counter = 1
-        while len(new_tree.edges) > 1:
+        while len(new_tree.edges) > 0:
 
             iter_counter += 1
             min_alpha = math.inf
@@ -171,7 +177,7 @@ class Algorithm:
                     min_alpha = edge.other_to_one_score / edge.other_to_one_cost
                     min_edge = edge
 
-            if min_edge is None:
+            if not min_edge:
                 print("break")
                 break
 
@@ -193,6 +199,9 @@ class Algorithm:
         min_edge_cost = 0
 
         safe_node = None
+
+        if not min_edge:
+            print("THIS IS NONE")
 
         if min_edge.one_to_other_cost != 0 and alpha == (min_edge.one_to_other_score / min_edge.one_to_other_cost):
             safe_node = min_edge.other
