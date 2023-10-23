@@ -90,12 +90,9 @@ class Algorithm:
                     edge.one_to_other_score = edge.one.score
                     edge.one_to_other_cost = edge.one.total_cost
 
-        print(len(temp_leaves))
         # trace back
         min_alpha = math.inf
         min_edge = None
-
-        print(len(input_tree.edges))
 
         for edge in input_tree.edges:
 
