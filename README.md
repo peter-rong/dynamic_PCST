@@ -19,5 +19,3 @@ python3 main.py filename.txt
 Stored in output.txt
 The output file has the format:
 - list of lowest threshold needed to drop the edge, one line for each edge
-
-```test```
